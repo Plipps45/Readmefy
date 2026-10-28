@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Animated, fully customizable README generator for your GitHub profile" />
+    <title>Readmefy</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%235865f2'/%3E%3Cstop offset='1' stop-color='%23eb459e'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='18' fill='url(%23g)'/%3E%3Crect x='16' y='24' width='32' height='6' rx='3' fill='%23fff'/%3E%3Crect x='16' y='36' width='20' height='6' rx='3' fill='%23fff' opacity='.75'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400..800&family=Unbounded:wght@600..700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/app.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Readmefy, home" data-i18n-attr="aria-label">
+        <span class="mark" aria-hidden="true"><i></i><i></i></span>
+        <span class="word">Readmefy</span>
+      </a>
+      <form id="load-form" class="user">
+        <label for="login" class="at">github.com/</label>
+        <input id="login" aria-label="GitHub username" data-i18n-attr="aria-label" autocomplete="off" spellcheck="false" />
+        <button type="submit" data-i18n>Load</button>
+        <div id="welcome-tip" class="welcome-tip" role="note" hidden>
+          <b data-i18n>Start here</b>
+          <span data-i18n>Type your GitHub username and press Load to see your profile.</span>
+          <button id="welcome-close" type="button" class="icon" aria-label="Close" data-i18n-attr="aria-label" data-ui="close" data-size="15"></button>
+        </div>
+      </form>
+      <span id="status" class="status" role="status"></span>
+      <div class="spacer"></div>
+      <select id="templates" title="Templates" aria-label="Apply a template" data-i18n-attr="title,aria-label">
+        <option value="" data-i18n>Templates…</option>
+      </select>
+      <div class="tool-group">
+        <button id="undo" class="icon" title="Undo (Ctrl+Z)" aria-label="Undo" data-i18n-attr="title,aria-label" data-ui="undo"></button>
+        <button id="redo" class="icon" title="Redo (Ctrl+Y)" aria-label="Redo" data-i18n-attr="title,aria-label" data-ui="redo"></button>
+      </div>
+      <button id="share" class="quiet" title="Copy a link with this configuration" data-i18n-attr="title" data-ui="link"><span data-i18n>Share</span></button>
+      <label class="lang-pick" title="Language" data-i18n-attr="title" data-ui="globe" data-size="16">
+        <select id="lang" aria-label="Language" data-i18n-attr="aria-label"></select>
+      </label>
+      <button id="export-btn" class="primary" data-i18n>Export / Install</button>
+    </header>
+
+    <main class="layout">
+      <aside class="side">
+        <nav class="tabs" aria-label="Panel">
+          <button data-tab="blocks" class="on" data-i18n>Blocks</button>
+          <button data-tab="style" data-i18n>Style</button>
+          <button data-tab="settings" data-i18n>Settings</button>
+        </nav>
+        <section id="tab-blocks" class="pane"></section>
+        <section id="tab-style" class="pane" hidden></section>
+        <section id="tab-settings" class="pane" hidden></section>
+      </aside>
+
+      <section class="stage">
+        <div class="stage-bar">
+          <div class="seg" role="group" aria-label="View" data-i18n-attr="aria-label">
+            <button data-view="preview" class="on" data-i18n>Preview</button>
+            <button data-view="code" data-ui="code">README.md</button>
+            <button data-view="files" data-ui="files"><span data-i18n>Files</span></button>
+          </div>
+          <div class="seg" role="group" aria-label="GitHub theme" data-i18n-attr="aria-label">
+            <button data-theme-btn="light" title="GitHub light theme" data-i18n-attr="title" data-ui="sun"><span data-i18n>Light</span></button>
+            <button data-theme-btn="dark" title="GitHub dark theme" data-i18n-attr="title" data-ui="moon"><span data-i18n>Dark</span></button>
+          </div>
+          <div class="seg" role="group" aria-label="Device" data-i18n-attr="aria-label">
+            <button data-device="desktop" class="on" title="Desktop" aria-label="Desktop" data-i18n-attr="title,aria-label" data-ui="desktop"></button>
+            <button data-device="mobile" title="Mobile" aria-label="Mobile" data-i18n-attr="title,aria-label" data-ui="mobile"></button>
+          </div>
+          <div class="spacer"></div>
+          <button id="replay" class="quiet" title="Play every animation from the start" data-i18n-attr="title" data-ui="replay"><span data-i18n>Replay animations</span></button>
+        </div>
+
+        <div id="view-preview" class="view">
+          <div class="sheet" id="sheet">
+            <div id="demo-banner" class="demo-banner" hidden>
+              <span class="demo-dot" aria-hidden="true"></span>
+              <p><b data-i18n>Default template with sample data.</b> <span data-i18n>Type your GitHub username to see it with your photo, stats and repositories.</span></p>
+              <button id="demo-go" type="button" class="primary" data-i18n>Enter username</button>
+            </div>
+            <button id="inkbar" class="inkbar" type="button" title="Profile colors: click to edit them" data-i18n-attr="title"></button>
+            <div id="frame" class="frame">
+              <div class="frame-head">
+                <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.74 3.74 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.75 3.75 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
+                <span><b id="login-label">your-username</b> / README.md</span>
+              </div>
+              <p id="mode-warn" class="mode-warn" hidden data-i18n>This profile only generates one version; GitHub will show it in both themes.</p>
+              <article id="md" class="md center"></article>
+            </div>
+          </div>
+        </div>
+
+        <div id="view-code" class="view" hidden>
+          <div class="code-bar"><span data-i18n>Generated README.md</span><button id="copy-readme" data-ui="copy"><span data-i18n>Copy</span></button></div>
+          <textarea id="readme-code" class="mono" readonly spellcheck="false" aria-label="Generated README.md" data-i18n-attr="aria-label"></textarea>
+        </div>
+
+        <div id="view-files" class="view" hidden>
+          <ul id="files-list" class="files"></ul>
+          <p class="hint" data-i18n>When exporting, each SVG embeds only the letters it uses, so they weigh much less than in this preview.</p>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="export" class="modal export">
+      <div class="modal-head">
+        <h3 data-i18n>Export profile</h3>
+        <button id="ex-close" class="icon" type="button" aria-label="Close" data-i18n-attr="aria-label" data-ui="close"></button>
+      </div>
+      <div class="ex-grid">
+        <section>
+          <h4 data-i18n>Download</h4>
+          <p><span data-i18n-html>A ZIP with <code>README.md</code>, the <code>assets/</code> folder with the animated SVGs and the configuration. Upload it to a <b>public</b> repository named exactly</span> <b id="ex-user">your-username</b>.</p>
+          <label class="field toggle"><input id="ex-action" type="checkbox" /><span class="switch"></span><span class="field-label" data-i18n>Include a GitHub Action to refresh the stats automatically</span></label>
+          <div class="btn-row">
+            <button id="ex-zip" class="primary" data-i18n>Download ZIP</button>
+            <button id="ex-copy" data-ui="copy"><span data-i18n>Copy README.md</span></button>
+          </div>
+        </section>
+        <section>
+          <h4 data-i18n>Or install directly</h4>
+          <p data-i18n-html>Creates the repository if it doesn't exist and uploads everything in one commit. Needs a classic token with the <code>public_repo</code> and <code>workflow</code> permissions. It is only used in this tab and sent only to api.github.com.</p>
+          <a href="https://github.com/settings/tokens/new?scopes=public_repo,workflow&description=Readmefy" target="_blank" rel="noopener" data-i18n>Create a token on GitHub</a>
+          <input id="ex-token" type="password" placeholder="ghp_…" autocomplete="off" aria-label="GitHub token" data-i18n-attr="aria-label" />
+          <button id="ex-install" class="primary" data-i18n>Install on GitHub</button>
+        </section>
+      </div>
+      <div id="ex-log" class="log" aria-live="polite"></div>
+    </dialog>
+
+    <div id="toasts" class="toasts" aria-live="polite"></div>
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>
